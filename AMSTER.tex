@@ -1,0 +1,306 @@
+Graphical plotting[edit]
+Packages are available which can render plots to graphical formats or display them in web browsers. Sometimes you have to install additional components.
+
+Vega[edit]
+Vega allows you to create visualizations in a web browser window. Vega is a visualization grammar, a declarative format for creating and saving visualization designs. With Vega you can describe data visualizations in a JSON format, and generate interactive views using either HTML5 Canvas or SVG. You can produce:
+
+Area plots
+Bar plots/Histograms
+Line plots
+Scatter plots
+Pie/Donut charts
+Waterfall charts
+Wordclouds
+The vega.js and d3.js libraries needed to render graphics are provided as part of the package. Vega.jl works with both IPython/Jupyter notebooks and the Julia REPL. When using IPython/Jupyter notebooks, the graphics will automatically be printed in-line. Submitting plots via the REPL will either open a new tab in the currently open (default) browser, or trigger the default browser to open.
+
+To use Vega, first add the package to your Julia installation. You have to do this just once:
+
+Pkg.add("Vega")
+Here's how to create a stacked area plot.
+
+using Vega
+x = [0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9]
+y = [28, 43, 81, 19, 52, 24, 87, 17, 68, 49, 55, 91, 53, 87, 48, 49, 66, 27, 16, 15]
+g = [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1]
+a = areaplot(x = x, y = y, group = g, stacked = true)
+graphic created with Julia and Vega.jl
+
+A general feature of Vega is that you can modify a visualization after you've created it. So, let's change the color scheme using a function (notice the "!" to indicate that the arguments are modified):
+
+colorscheme!(a, ("Reds", 3))
+graphic created with Julia and Vega.jl
+
+You can create pie (and donut) charts easily by supplying two arrays. The x array provides the labels, the y array provides the quantities:
+
+ fruit = ["peaches", "plums", "blueberries", "strawberries", "bananas"];
+ bushels = [100, 32, 180, 46, 21];
+ piechart(x = fruit, y = bushels, holesize = 125)
+a pie/donut chart created in Julia/Vega.jl
+
+Bokeh[edit]
+Bokeh.jl provides an interface to Bokeh, the Python interactive visualization library that targets modern web browsers for presentation. Its goal is to provide elegant, concise construction of novel graphics in the style of D3.js, but also deliver this capability with high-performance interactivity over very large or streaming datasets.
+
+First, add the package to your Julia installation. You have to do this just once:
+
+Pkg.add("Bokeh")
+Here's an example of a date plot. Bokeh can render the X or Y axis as dates.
+
+using Bokeh
+using Dates # for version 0.3
+start = Date(2015, 6, 21)
+days = 120
+x = map(d -> start + Dates.Day(d), 1:days)
+y = 15 + randn(days) * 4
+plot(x, y, title="A typical British Summer", legends=["Temperature"])
+a plot produced by Julia and Bokeh.jl
+
+PyPlot[edit]
+If you're already familiar with MatLab, or Python's plotting environment, you should be happy with PyPlot.
+
+First, add the package to your Julia installation. You have to do this just once:
+
+julia> Pkg.add("PyPlot")
+A simple plot can be produced with:
+
+julia> using PyPlot
+julia> x = collect(-pi:0.2:pi);
+julia> plot(x, sin(x), ".")
+1-element Array{Any,1}:
+ PyObject <matplotlib.lines.Line2D object at 0x114734940>
+plot produced by PyPlot
+
+Winston[edit]
+Winston (perhaps named for Julia's lover in George Orwell's 1984?) offers "an easy to use plot command to create figures without any fuss":
+
+julia> Pkg.add("Winston")
+julia> using Winston
+For a simple plot, supply Winston's plot() function with an array:
+
+julia> plot([sin(a) for a in 0.0:0.1:2 * pi])
+FramedPlot(...)
+julia> savefig("figure.png")
+simple plot made by Winston (Julia plotting package)
+
+Gadfly[edit]
+The Gadfly package implements the grammar of graphics, developed by Hadley Wickham and Leland Wilkinson for the R software environment. It renders publication-quality graphics to PNG, Postscript, PDF, and SVG. The SVG backend uses embedded JavaScript powered by Snap.svg, to add interactivity like panning, zooming, and toggling.
+
+First, add the package to your Julia installation. You have to do this just once:
+
+julia> Pkg.add("Gadfly")
+Then you want to load the Gadfly package:
+
+julia> using Gadfly
+Most of your plotting work is going to involve using the plot() function. This has many different forms — it's "overloaded" so that it can plot the data in:
+
+functions
+arrays
+dataframes (provided by the DataFrames package)
+The basic form of a plot instruction is:
+
+plot(data, mappings, element1, element2, …)
+where 'data' is the function, array, or other data source, the 'mappings' are the symbol and assignments that link to the data, and the 'elements' are the various options such as themes, scales, plot markers, labels, titles, and guides that you'll want to tweak and adjust to make the plot look amazing.
+
+julia> p = plot(x=randn(2000), Geom.histogram(bincount=100))
+histogram plot created in Julia using Gadfly
+
+Example of plotting a simple graph in Gadfly[edit]
+Here's an example of plotting a simple graph using Gadfly. In this example, the aim is to plot the varying value of the equation of time during a year. The data to be plotted is an array of 365 real numbers ranging between -20 and 20 minutes. The values can be calculated with the following code (which uses the Astro.jl library).
+
+using Astro, Dates 
+days = collect(DateTime(2015,1,1, 0,0,0):DateTime(2015,12,31,0,0,0)); # an array of 365 datetimes
+eq_values = Array{Float64}(0);
+for day in days
+   push!(eq_values, equation_time(Dates.datetime2julian(day)))
+end
+The array eq_values now holds the 365 numbers to be plotted:
+
+length(eq_values)
+365
+To produce a very basic plot, assign the varying values in the eq_values array to the y 'aesthetic', and use a simple range object (1:365) for the x 'aesthetic'. The default geometry is a point:
+
+plot1 = plot(
+   x = 1:length(days), # the x-axis from 1 to 365
+   y = eq_values       # the y-axis for the values of the equation of time   
+   )
+graph of equation of time created in Gadfly (Julia)
+
+You don't have to store the plot in a variable, but it can be useful later on.
+
+The first obvious addition is to add explanatory text labels and a title to the graph. In Gadfly-speak, these are called "guide" objects:
+
+plot2 = plot(
+   x=1:length(days),
+   y=eq_values,
+   Guide.ylabel("Minutes faster or slower than GMT"), # label for y-axis
+   Guide.xlabel("day in year"),  # label for x-axis
+   Guide.title("The Equation of Time")  # a title
+)
+graph of equation of time created in Gadfly (Julia)
+
+One problem with this plot is that the ticks and labels running along x-axis aren't very informative, so we'll convert the list of 365 DateTime objects to strings:
+
+datestrings = Dates.format(days, DateFormat("u dd"))
+365-element Array{Any,1}:
+"Jan 01"
+"Jan 02"
+"Jan 03"
+"Jan 04"
+"Jan 05"
+⋮       
+"Dec 28"
+"Dec 29"
+"Dec 30"
+"Dec 31"
+Then we can use these for the x aesthetic, replacing the simple range from 1 to 365. We've switched from Geom.point to Geom.line. And we're adding two new property settings: ticks, and a theme.
+
+The Guide.xticks and Guide.yticks settings control the tick marks and labels for the axes. The ticks can be specified with an array.
+
+There are far too many strings to draw each one, so a step size of 14 is useful for ticks — every 14 days there's a tick and a label.
+
+The Theme settings determine the visual styling of the plot.
+
+plot3 = plot(
+   x=datestrings,                                     # use dates for x
+   y=eq_values,                                       # equation values
+   Guide.xticks(
+      ticks=[1:14:365],                               # show 1 in 14 ticks
+      orientation=:vertical                           # rotate to vertical
+      ),
+   Guide.yticks(
+      ticks=[-20:5:20]                                # show labels and ticks for every 5 seconds  
+      ),
+   Guide.ylabel("Minutes faster or slower than GMT"), # label for y-axis
+   Guide.xlabel("day in year"),                       # label for x-axis
+   Guide.title("The Equation of Time"),               # title
+   Geom.line,                                         # line rather than point
+   Theme(
+     default_color=color("#FF0022"),                  # color of plot line
+     default_point_size=3pt,                          # text size
+     panel_fill=color("#00FF00"),                     # background color of plot
+     panel_stroke=color("Blue"),                      # edge of plot
+     line_width=2px                                   # width of line
+     )
+   )
+graph of equation of time created in Gadfly (Julia)
+
+Another way of avoiding the mess that you get if you try to plot too many items is to use stepped ranges to 'sample' the x and y data aesthetics.
+
+plot4 = plot(
+ x=datestrings[1:7:end],                                       # step through every seventh date
+ y=eq_values[1:7:end],                                         # step through every seventh value
+ Guide.ylabel("Minutes faster or slower than GMT"),
+ Guide.xlabel("day in year"),
+ Guide.xticks(orientation=:vertical),
+ Geom.hline(size=0.25mm, color="darkgray"), yintercept=[5,8],  # thin grey horizontal lines at y = 5 and y = 8
+ Geom.point,
+ Theme(
+     default_point_size=1mm, 
+     minor_label_font_size=6pt),
+)
+graph of equation of time created in Gadfly (Julia)
+
+As an alternative to placing pre-made date strings along the x-axis, we can make use of the Scale element. This is how to transform the basic data to make labels or re-scaled values. For x_discrete, you can supply a function which takes a numerical value and generates a string that defines the label. To avoid plotting every label, this anonymous function provides the date string label only every 14 times - i.e. every fortnight, producing an empty string otherwise:
+
+plot5 = plot(
+   x=1:length(eq_values),    
+   y=eq_values, 
+   Theme(default_point_size=2pt, 
+         minor_label_font_size=6pt,
+         grid_line_width=0.1pt),
+   Guide.ylabel("Minutes faster or slower than GMT"),
+   Guide.xlabel("day in year"),
+   Geom.point,
+   Guide.xticks(orientation=:vertical),
+   Scale.x_discrete(
+         labels=n -> n%14 == 0 ? Dates.format(days[n], DateFormat("e, dd u")) : "")
+)
+graph of equation of time created in Gadfly (Julia)
+
+Combining plots[edit]
+A simplified model of the equation of time is given by the following formula:
+
+equation(d) = -7.65 * sind(d) + 9.87 * sind((2 * d) + 206)
+which is plotted easily from 1 to 365 using another Gadfly plot method:
+
+plot6 = plot(equation, 1, 365)
+graph of equation of time created in Gadfly (Julia)
+
+You can stack these plots one above the other, using vstack():
+
+vstack(plot5,plot6)
+(There's an hstack() as well.)
+
+To superimpose the two graphs, we can make use of layers. Here, the first layer holds the point/line plot, the second layer draws the equation.
+
+plot7 = plot(
+ layer(
+   # first layer
+   x=1:365,
+   y=eq_values,
+   Theme(
+     default_point_size=2pt, 
+     minor_label_font_size=6pt,
+     default_color=color("orange")),
+   Geom.point), 
+ layer(        
+  # second layer
+   equation, 1, 365),
+ Theme(    
+ # theme for all layers
+   default_point_size=2pt,
+   major_label_font_size=12pt,
+   minor_label_font_size=16pt, 
+   default_color=color("purple")),
+ Guide.ylabel("Minutes faster or slower than GMT"),
+ Guide.xlabel("day in year"),
+ Guide.xticks(orientation=:vertical)
+)
+graph of equation of time created in Gadfly (Julia)
+
+Each layer can be styled differently, using the Theme setting.
+
+plot8 = plot(
+ # first layer
+ layer(
+   x=datestrings[1:7:end],
+   y=eq_values[1:7:end],  
+   Geom.line,
+   Theme(
+      line_width=1pt,
+      default_color=color("orange")
+   )
+ ),
+ # second layer
+ layer(
+   x=datestrings[1:7:end],
+   y=eq_values[1:7:end],
+   Geom.point,
+   Theme(
+      default_point_size=1mm,
+      default_color=color("green"))
+ ),
+  # background 
+  Theme(
+     panel_fill=color("#FFFF00"),
+     panel_opacity=0.1,
+     panel_stroke=color("Blue"),
+   )
+)
+graph of equation of time created in Gadfly (Julia)
+
+You can use some theme settings inside layers, and others for styling the whole plot.
+
+Changing the size[edit]
+To change the size of a Gadfly plot, for example when using IJulia/Jupyter, you can use the following form:
+
+draw(SVG(50cm, 20cm), plot( ... ) )
+or
+
+draw(SVGJS(50cm, 20cm), plot( ... ) )
+Saving plots[edit]
+To save a plot to a file, use Gadfly's draw() function. Because we named each plot, saving them all to automatically-named files is easy.
+
+for i in 1:8
+   println("Saving plot $i")
+   draw(PDF(join(["equation-graph-", string(i), ".pdf"]), 16cm, 12cm), eval(symbol("plot" * string(i))))
+end
