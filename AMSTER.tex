@@ -1,7 +1,7 @@
-Graphical plotting[edit]
+\subsection*{Graphical plotting}
 Packages are available which can render plots to graphical formats or display them in web browsers. Sometimes you have to install additional components.
 
-Vega[edit]
+\subsection*{Vega}
 Vega allows you to create visualizations in a web browser window. Vega is a visualization grammar, a declarative format for creating and saving visualization designs. With Vega you can describe data visualizations in a JSON format, and generate interactive views using either HTML5 Canvas or SVG. You can produce:
 
 Area plots
@@ -37,7 +37,7 @@ You can create pie (and donut) charts easily by supplying two arrays. The x arra
  piechart(x = fruit, y = bushels, holesize = 125)
 a pie/donut chart created in Julia/Vega.jl
 
-Bokeh[edit]
+\subsection*{Bokeh}
 Bokeh.jl provides an interface to Bokeh, the Python interactive visualization library that targets modern web browsers for presentation. Its goal is to provide elegant, concise construction of novel graphics in the style of D3.js, but also deliver this capability with high-performance interactivity over very large or streaming datasets.
 
 First, add the package to your Julia installation. You have to do this just once:
@@ -69,7 +69,7 @@ julia> plot(x, sin(x), ".")
  PyObject <matplotlib.lines.Line2D object at 0x114734940>
 plot produced by PyPlot
 
-Winston[edit]
+\subsection*{Winston}
 Winston (perhaps named for Julia's lover in George Orwell's 1984?) offers "an easy to use plot command to create figures without any fuss":
 
 julia> Pkg.add("Winston")
@@ -81,7 +81,7 @@ FramedPlot(...)
 julia> savefig("figure.png")
 simple plot made by Winston (Julia plotting package)
 
-Gadfly[edit]
+\subsection*{Gadfly}
 The Gadfly package implements the grammar of graphics, developed by Hadley Wickham and Leland Wilkinson for the R software environment. It renders publication-quality graphics to PNG, Postscript, PDF, and SVG. The SVG backend uses embedded JavaScript powered by Snap.svg, to add interactivity like panning, zooming, and toggling.
 
 First, add the package to your Julia installation. You have to do this just once:
@@ -103,7 +103,7 @@ where 'data' is the function, array, or other data source, the 'mappings' are th
 julia> p = plot(x=randn(2000), Geom.histogram(bincount=100))
 histogram plot created in Julia using Gadfly
 
-Example of plotting a simple graph in Gadfly[edit]
+\subsection*{Example of plotting a simple graph in Gadfly}
 Here's an example of plotting a simple graph using Gadfly. In this example, the aim is to plot the varying value of the equation of time during a year. The data to be plotted is an array of 365 real numbers ranging between -20 and 20 minutes. The values can be calculated with the following code (which uses the Astro.jl library).
 
 using Astro, Dates 
@@ -216,7 +216,7 @@ plot5 = plot(
 )
 graph of equation of time created in Gadfly (Julia)
 
-Combining plots[edit]
+\subsection*{Combining plots}
 A simplified model of the equation of time is given by the following formula:
 
 equation(d) = -7.65 * sind(d) + 9.87 * sind((2 * d) + 206)
@@ -290,14 +290,14 @@ graph of equation of time created in Gadfly (Julia)
 
 You can use some theme settings inside layers, and others for styling the whole plot.
 
-Changing the size[edit]
+\subsection*{Changing the size}
 To change the size of a Gadfly plot, for example when using IJulia/Jupyter, you can use the following form:
 
 draw(SVG(50cm, 20cm), plot( ... ) )
 or
 
 draw(SVGJS(50cm, 20cm), plot( ... ) )
-Saving plots[edit]
+\subsection*{Saving plots}
 To save a plot to a file, use Gadfly's draw() function. Because we named each plot, saving them all to automatically-named files is easy.
 
 for i in 1:8
